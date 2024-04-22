@@ -21,8 +21,6 @@ public class UserEntity {
     private String username;
     @NotBlank
     private String password;
-    @NotBlank
     private String roles;
-    @NotBlank
     private String permissions;
 }

@@ -1,6 +1,7 @@
 package th.co.ais.internal.sample.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,24 +11,29 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Component
+@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final MyUserDetailService myUserDetailService;
 
-    public SecurityConfig(MyUserDetailService myUserDetailService) {
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(MyUserDetailService myUserDetailService, JwtAuthFilter jwtAuthFilter) {
         this.myUserDetailService = myUserDetailService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
@@ -37,10 +43,12 @@ public class SecurityConfig {
                 requests
                         .requestMatchers("/admin").hasAnyRole("ADMIN")
                         .requestMatchers("/auth/authenticate").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/member").hasAuthority("MEMBER_READ")
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
                         .anyRequest()
                         .authenticated());
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
     //    http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
