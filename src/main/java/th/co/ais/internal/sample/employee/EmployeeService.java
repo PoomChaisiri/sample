@@ -32,6 +32,11 @@ public class EmployeeService {
         return optionalEmployee.get().toResponse();
     }
 
+    public EmployeeResponse getEmployeeByIdQuery(Integer id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByIdQuery(id.longValue());
+        return optionalEmployee.get().toResponse();
+    }
+
     public EmployeeResponse editEmployeeById(Integer id, EmployeeRequest requestDto) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id.longValue());
         Employee employee = optionalEmployee.get();

@@ -28,6 +28,11 @@ public class EmployeeController {
         return this.employeeService.getEmployeeById(id);
     }
 
+    @GetMapping("/query/{id}")
+    public EmployeeResponse getEmployeeByIdQuery(@PathVariable Integer id) {
+        return this.employeeService.getEmployeeByIdQuery(id);
+    }
+
     @PostMapping("")
     public EmployeeResponse createEmployee(@Valid @RequestBody EmployeeRequest requestDto) throws Exception {
         return this.employeeService.createEmployee(requestDto);
