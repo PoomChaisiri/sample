@@ -1,6 +1,7 @@
 package th.co.ais.internal.sample.employee;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class Employee {
     @Column(name = "emp_id")
     private int empId;
 
+    @NotNull
     @Column(name = "emp_name")
     private String empName;
 
